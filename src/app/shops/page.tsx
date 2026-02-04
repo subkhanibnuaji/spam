@@ -67,7 +67,7 @@ function ShopsContent() {
   const [pickupOnly, setPickupOnly] = useState(false);
   const [surfaceConfirmedOnly, setSurfaceConfirmedOnly] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("rating");
+  const [sortBy, setSortBy] = useState("googleRating");
 
   const fetchShops = useCallback(async () => {
     setLoading(true);
@@ -236,8 +236,8 @@ function ShopsContent() {
                 onChange={(e) => setSortBy(e.target.value)}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
-                <option value="rating">Rating</option>
-                <option value="reviews">Reviews</option>
+                <option value="googleRating">Rating</option>
+                <option value="googleReviews">Reviews</option>
                 <option value="name">Name</option>
               </select>
             </div>

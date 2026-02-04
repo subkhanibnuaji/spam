@@ -11,8 +11,10 @@ export async function GET(request: NextRequest) {
     const hasHomeService = searchParams.get("hasHomeService");
     const surfaceConfirmed = searchParams.get("surfaceConfirmed");
     const search = searchParams.get("search");
-    const sortBy = searchParams.get("sortBy") || "googleRating";
-    const sortOrder = searchParams.get("sortOrder") || "desc";
+    const allowedSortFields = ["googleRating", "googleReviews", "name", "tier", "lcdPriceMin"];
+    const rawSortBy = searchParams.get("sortBy") || "googleRating";
+    const sortBy = allowedSortFields.includes(rawSortBy) ? rawSortBy : "googleRating";
+    const sortOrder = searchParams.get("sortOrder") === "asc" ? "asc" : "desc";
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "20", 10);
 
