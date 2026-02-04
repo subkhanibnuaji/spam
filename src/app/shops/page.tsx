@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { Suspense, useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -35,6 +35,14 @@ import { parseJsonArray, isOpenNow, formatCurrency } from "@/lib/utils";
 import type { Shop, ShopsResponse } from "@/types";
 
 export default function ShopsPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center py-20"><Loading size="lg" /></div>}>
+      <ShopsContent />
+    </Suspense>
+  );
+}
+
+function ShopsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 

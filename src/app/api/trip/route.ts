@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { optimizeRoute, generateTimeline } from "@/lib/trip-calculator";
-import type { TripRequest, TripResponse, TripStop } from "@/types";
 
 export async function POST(request: NextRequest) {
   try {
-    const body: TripRequest = await request.json();
+    const body = await request.json();
     const {
       startLat,
       startLng,
@@ -123,7 +122,7 @@ export async function POST(request: NextRequest) {
       return {
         order: index + 1,
         type: entry.stop.type as "shop" | "cluster",
-        item: item as TripStop["item"],
+        item: item as unknown,
         arrivalTime: entry.arrivalTime,
         departureTime: entry.departureTime,
         visitDuration: entry.stop.visitDuration,
@@ -168,7 +167,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const response: TripResponse = {
+    const response = {
       tripId: trip.id,
       route: {
         totalDistance,

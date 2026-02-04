@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { MobileNav } from "@/components/layout/mobile-nav";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Surface Repair Finder Jakarta",
@@ -27,7 +24,7 @@ export default function RootLayout({
           crossOrigin=""
         />
       </head>
-      <body className={inter.className}>
+      <body className="font-sans">
         <div className="min-h-screen bg-gray-50">
           <Header />
           <main className="pb-20 md:pb-8">{children}</main>

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import type { ShopsResponse } from "@/types";
 
 export async function GET(request: NextRequest) {
   try {
@@ -76,20 +75,11 @@ export async function GET(request: NextRequest) {
 
     const totalPages = Math.ceil(total / limit);
 
-    const response: ShopsResponse = {
-      data: data as ShopsResponse["data"],
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages,
-      },
-      meta: {
-        tierCounts,
-      },
-    };
-
-    return NextResponse.json(response);
+    return NextResponse.json({
+      data,
+      pagination: { total, page, limit, totalPages },
+      meta: { tierCounts },
+    });
   } catch (error) {
     console.error("Error fetching shops:", error);
     return NextResponse.json(
