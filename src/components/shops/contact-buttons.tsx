@@ -55,7 +55,7 @@ export function ContactButtons({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => window.open(website, "_blank")}
+          onClick={() => window.open(website.startsWith("http") ? website : `https://${website}`, "_blank")}
           className="gap-1.5"
         >
           <Globe className="h-4 w-4" />
