@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Shop {
+  id                 String   @id @default(cuid())
+  name               String
+  address            String
+  district           String
+  area               String
+  clusterId          String?
+  latitude           Float?
+  longitude          Float?
+  phone              String?
+  whatsapp           String?
+  website            String?
+  instagram          String?
+  instagramFollowers Int?
+  googleRating       Float?
+  googleReviews      Int?
+  tier               String
+  tierReason         String
+  surfaceConfirmed   Boolean  @default(false)
+  surfaceNotes       String?
+  services           String
+  lcdPriceMin        Int?
+  lcdPriceMax        Int?
+  laborFee           Int?
+  warrantyDays       Int?
+  operatingHours     String
+  hasHomeService     Boolean  @default(false)
+  hasPickupDelivery  Boolean  @default(false)
+  yearsInBusiness    Int?
+  specializations    String?
+  certifications     String?
+  dataSource         String
+  lastVerified       DateTime?
+  notes              String?
+  cluster            Cluster? @relation(fields: [clusterId], references: [id])
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Cluster {
+  id              String   @id @default(cuid())
+  name            String
+  type            String
+  address         String
+  district        String
+  latitude        Float
+  longitude       Float
+  shops           Shop[]
+  avgVisitMinutes Int      @default(30)
+  parkingInfo     String?
+  bestVisitTime   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model TripPlan {
+  id            String   @id @default(cuid())
+  name          String?
+  startAddress  String
+  startLat      Float
+  startLng      Float
+  startTime     String
+  transportMode String
+  selectedItems String
+  routeData     String
+  totalDistance  Float?
+  totalDuration Int?
+  createdAt     DateTime @default(now())
+}
