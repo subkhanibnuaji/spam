@@ -152,23 +152,29 @@ export async function POST(request: NextRequest) {
       stops: responseStops,
     });
 
-    // Save trip to database
-    const trip = await prisma.tripPlan.create({
-      data: {
-        startAddress: `${startLat},${startLng}`,
-        startLat,
-        startLng,
-        startTime,
-        transportMode,
-        selectedItems,
-        routeData,
-        totalDistance,
-        totalDuration,
-      },
-    });
+    // Try to save trip to database (may fail on read-only filesystems like Vercel)
+    let tripId = "temp-" + Date.now();
+    try {
+      const trip = await prisma.tripPlan.create({
+        data: {
+          startAddress: `${startLat},${startLng}`,
+          startLat,
+          startLng,
+          startTime,
+          transportMode,
+          selectedItems,
+          routeData,
+          totalDistance,
+          totalDuration,
+        },
+      });
+      tripId = trip.id;
+    } catch {
+      // Database is read-only (e.g. Vercel deployment), skip saving
+    }
 
     const response = {
-      tripId: trip.id,
+      tripId,
       route: {
         totalDistance,
         totalDuration,
