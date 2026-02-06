@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 interface TierBadgeProps {
   tier: string;
   size?: "sm" | "md" | "lg";
+  showLabel?: boolean;
 }
 
 const sizeClasses = {
@@ -13,13 +14,13 @@ const sizeClasses = {
   lg: "text-base px-3 py-1",
 };
 
-export function TierBadge({ tier, size = "md" }: TierBadgeProps) {
+export function TierBadge({ tier, size = "md", showLabel = true }: TierBadgeProps) {
   const config = TIER_CONFIG[tier as TierKey];
 
   if (!config) {
     return (
       <Badge variant="outline" className={sizeClasses[size]}>
-        {tier}
+        Tier {tier}
       </Badge>
     );
   }
@@ -34,7 +35,7 @@ export function TierBadge({ tier, size = "md" }: TierBadgeProps) {
       )}
     >
       <span className="font-bold">{tier}</span>
-      <span className="ml-1.5 font-normal">{config.label}</span>
+      {showLabel && <span className="ml-1.5 font-normal">{config.label}</span>}
     </Badge>
   );
 }
