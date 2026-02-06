@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import L from "leaflet";
+import { TIER_CONFIG, TierKey } from "@/lib/constants";
 
 interface MapMarker {
   lat: number;
@@ -18,13 +19,6 @@ interface TripMapProps {
   startLng: number;
   showRoute?: boolean;
 }
-
-const TIER_COLORS: Record<string, string> = {
-  S: "#f59e0b",
-  A: "#10b981",
-  B: "#3b82f6",
-  C: "#6b7280",
-};
 
 function createMarkerIcon(
   label: string,
@@ -108,25 +102,27 @@ export default function TripMap({
 
     L.marker([startLat, startLng], { icon: startIcon })
       .addTo(map)
-      .bindPopup("Starting Point");
+      .bindPopup("Starting Point - Kebayoran Baru");
 
     // Add markers
     const bounds = L.latLngBounds([[startLat, startLng]]);
 
     markers.forEach((m) => {
       if (!m.lat || !m.lng) return;
-      const color =
-        m.tier && TIER_COLORS[m.tier]
-          ? TIER_COLORS[m.tier]
-          : m.selected
-            ? "#3b82f6"
-            : "#6b7280";
+
+      // Get tier color from TIER_CONFIG
+      let color = "#6b7280"; // default gray
+      if (m.tier && TIER_CONFIG[m.tier as TierKey]) {
+        color = TIER_CONFIG[m.tier as TierKey].color;
+      } else if (m.selected) {
+        color = "#3b82f6"; // blue for selected without tier
+      }
 
       const icon = createMarkerIcon(m.label, color, m.selected);
 
       L.marker([m.lat, m.lng], { icon })
         .addTo(map)
-        .bindPopup(`<strong>${m.name}</strong>`);
+        .bindPopup(`<strong>${m.name}</strong><br/>Tier ${m.tier || '?'}`);
 
       bounds.extend([m.lat, m.lng]);
     });
@@ -164,5 +160,5 @@ export default function TripMap({
     };
   }, []);
 
-  return <div ref={mapContainerRef} className="h-[400px] w-full" />;
+  return <div ref={mapContainerRef} className="h-[400px] w-full rounded-lg" />;
 }

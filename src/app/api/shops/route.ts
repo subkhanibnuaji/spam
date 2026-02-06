@@ -66,13 +66,10 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    // Build tier counts map
-    const tierCounts = { S: 0, A: 0, B: 0, C: 0 };
+    // Build tier counts map for tiers 1-8
+    const tierCounts: Record<string, number> = {};
     for (const entry of tierCountsRaw) {
-      const t = entry.tier as keyof typeof tierCounts;
-      if (t in tierCounts) {
-        tierCounts[t] = entry._count.tier;
-      }
+      tierCounts[entry.tier] = entry._count.tier;
     }
 
     const totalPages = Math.ceil(total / limit);

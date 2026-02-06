@@ -14,7 +14,7 @@ export interface Shop {
   instagramFollowers: number | null;
   googleRating: number | null;
   googleReviews: number | null;
-  tier: "S" | "A" | "B" | "C";
+  tier: string;
   tierReason: string;
   surfaceConfirmed: boolean;
   surfaceNotes: string | null;
@@ -62,7 +62,7 @@ export interface ShopsResponse {
     totalPages: number;
   };
   meta: {
-    tierCounts: { S: number; A: number; B: number; C: number };
+    tierCounts: Record<string, number>;
   };
 }
 
