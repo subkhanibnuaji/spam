@@ -776,6 +776,342 @@
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-gray-300 py-12">
+    <!-- Hidden Costs -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold mb-8">💰 Hidden Costs & Gotchas</h2>
+            
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+                <div class="bg-gray-800 text-white p-4">
+                    <h3 class="text-xl font-bold">12-Month Total Cost Comparison</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-4 text-left">Provider</th>
+                                <th class="p-4 text-right">Monthly</th>
+                                <th class="p-4 text-right">12-Month</th>
+                                <th class="p-4 text-left">Hidden Costs</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr>
+                                <td class="p-4 font-medium">Netcup RS 1000 (Annual)</td>
+                                <td class="p-4 text-right">~$9.45</td>
+                                <td class="p-4 text-right font-bold">~$113.40</td>
+                                <td class="p-4 text-sm">
+                                    • Setup €9.90 (monthly only)<br>
+                                    • VAT 19% (EU customers)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-medium">OVH VPS-1</td>
+                                <td class="p-4 text-right">~$4.80</td>
+                                <td class="p-4 text-right font-bold">~$57.60</td>
+                                <td class="p-4 text-sm">
+                                    • APAC bandwidth limit<br>
+                                    • Overage possible
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-medium">Hostinger KVM 2</td>
+                                <td class="p-4 text-right">$8.99 → $12.99</td>
+                                <td class="p-4 text-right font-bold">~$107.88+</td>
+                                <td class="p-4 text-sm">
+                                    • Renewal price jump<br>
+                                    • Throttling unclear
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-medium">Hetzner CX43</td>
+                                <td class="p-4 text-right">€9.49</td>
+                                <td class="p-4 text-right font-bold">~$123.00</td>
+                                <td class="p-4 text-sm">
+                                    • Bandwidth €1/TB<br>
+                                    • CPU throttle 20%
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded">
+                    <h4 class="font-bold mb-3">⚠️ VAT & Tax</h4>
+                    <p class="text-sm text-gray-700 mb-2">
+                        Provider EU (Netcup, Hetzner) biasanya <strong>tidak kenakan PPN</strong> untuk pelanggan Indonesia (ekspor jasa digital). Harga yang dicantumkan umumnya ex-VAT untuk non-EU.
+                    </p>
+                    <p class="text-xs text-gray-600">
+                        💡 Pastikan alamat billing di Indonesia agar VAT dikecualikan.
+                    </p>
+                </div>
+
+                <div class="bg-orange-50 border-l-4 border-orange-500 p-6 rounded">
+                    <h4 class="font-bold mb-3">⚠️ Bandwidth Overage</h4>
+                    <ul class="text-sm text-gray-700 space-y-2">
+                        <li>• <strong>Netcup:</strong> ~80-120TB soft cap, throttle ke 200-300 Mbps</li>
+                        <li>• <strong>Hetzner:</strong> 20TB included, $1/TB overage</li>
+                        <li>• <strong>OVH:</strong> "Unlimited" tapi bisa throttle ke 1 Mbps jika abuse</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OpenClaw Specific -->
+    <section class="section-alt py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold mb-8">🤖 OpenClaw Specific Tips</h2>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4">Chrome Flags untuk VPS</h3>
+                    <div class="bg-gray-900 text-green-400 rounded p-4 font-mono text-xs overflow-x-auto">
+                        <div>--no-sandbox</div>
+                        <div>--disable-setuid-sandbox</div>
+                        <div>--disable-dev-shm-usage</div>
+                        <div>--disable-accelerated-2d-canvas</div>
+                        <div>--no-first-run</div>
+                        <div>--no-zygote</div>
+                        <div>--disable-gpu</div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-3">
+                        💡 Flags ini mengurangi resource usage dan meningkatkan stability di VPS environment.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4">Memory Management</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-semibold text-sm mb-2">Swap Configuration</h4>
+                            <p class="text-sm text-gray-600">
+                                Setup swap file 2-4GB di NVMe sebagai safety net untuk memory spikes. Dengan IOPS tinggi Netcup, swap performance acceptable.
+                            </p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-sm mb-2">Resource Monitoring</h4>
+                            <p class="text-sm text-gray-600">
+                                Gunakan <code class="bg-gray-100 px-2 py-1 rounded">htop</code> atau <code class="bg-gray-100 px-2 py-1 rounded">gotop</code> untuk monitor CPU/RAM real-time.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                <h3 class="text-lg font-bold mb-4 text-blue-800">🆚 Managed vs Self-Hosted</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold mb-2">xCloud Managed ($24/mo)</h4>
+                        <ul class="text-sm space-y-1">
+                            <li>✅ Zero setup time</li>
+                            <li>✅ Managed maintenance</li>
+                            <li>✅ Production support</li>
+                            <li>❌ 2.7x lebih mahal</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">Self-Hosted VPS (~$9/mo)</h4>
+                        <ul class="text-sm space-y-1">
+                            <li>✅ 2.7x cost savings</li>
+                            <li>✅ Full control</li>
+                            <li>✅ No vendor lock-in</li>
+                            <li>⚠️ Setup time required</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold mb-8">💳 Payment & Indonesia-Specific</h2>
+
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+                <div class="table-responsive">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-3 text-left">Provider</th>
+                                <th class="p-3 text-center">CC Indo</th>
+                                <th class="p-3 text-center">PayPal</th>
+                                <th class="p-3 text-left">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr>
+                                <td class="p-3 font-medium">Netcup</td>
+                                <td class="p-3 text-center">✅</td>
+                                <td class="p-3 text-center">✅</td>
+                                <td class="p-3">
+                                    Verifikasi ID required. PayPal recommended as backup.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium">Hetzner</td>
+                                <td class="p-3 text-center">⚠️</td>
+                                <td class="p-3 text-center">✅</td>
+                                <td class="p-3">
+                                    Additional docs possible. PayPal smoother.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium">OVH</td>
+                                <td class="p-3 text-center">✅</td>
+                                <td class="p-3 text-center">✅</td>
+                                <td class="p-3">
+                                    Easiest for Indonesia. No known restrictions.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h4 class="font-bold mb-3">Virtual Cards</h4>
+                    <ul class="text-sm space-y-2">
+                        <li>• <strong>Wise:</strong> Better FX rates</li>
+                        <li>• <strong>Revolut:</strong> Multi-currency</li>
+                        <li>• <strong>Jenius:</strong> Local Indonesian</li>
+                    </ul>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h4 class="font-bold mb-3">PayPal Strategies</h4>
+                    <ul class="text-sm space-y-2">
+                        <li>• Link ke bank lokal</li>
+                        <li>• Top-up via transfer</li>
+                        <li>• Backup jika CC declined</li>
+                    </ul>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h4 class="font-bold mb-3">Troubleshooting</h4>
+                    <ul class="text-sm space-y-2">
+                        <li>• Siapkan scan ID/passport</li>
+                        <li>• Gunakan alamat valid</li>
+                        <li>• Contact support jika stuck</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Provider Terlewat -->
+    <section class="section-alt py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold mb-8">🔍 Provider yang Terlewat</h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-bold mb-3">Vultr</h3>
+                    <div class="mb-4">
+                        <span class="badge badge-red">RAM Insufficient</span>
+                    </div>
+                    <ul class="text-sm space-y-2 text-gray-600">
+                        <li>• 30+ datacenters (SG/Tokyo)</li>
+                        <li>• Hourly billing flexible</li>
+                        <li>• ~64K IOPS capable</li>
+                        <li>❌ No 8GB plan in budget</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-bold mb-3">DigitalOcean</h3>
+                    <div class="mb-4">
+                        <span class="badge badge-red">IOPS Lower</span>
+                    </div>
+                    <ul class="text-sm space-y-2 text-gray-600">
+                        <li>• Excellent documentation</li>
+                        <li>• Active community</li>
+                        <li>• SSD IOPS 15-25K</li>
+                        <li>❌ Worse than Netcup</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-bold mb-3">Linode (Akamai)</h3>
+                    <div class="mb-4">
+                        <span class="badge badge-red">Over Budget</span>
+                    </div>
+                    <ul class="text-sm space-y-2 text-gray-600">
+                        <li>• Exceptional network</li>
+                        <li>• CDN integration</li>
+                        <li>• Dedicated dari $36/mo</li>
+                        <li>❌ Jauh di atas budget</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Additional Insights -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold mb-8">💡 Additional Insights</h2>
+
+            <div class="space-y-6">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4">Split-Workload Architecture</h3>
+                    <p class="text-gray-700 mb-4">
+                        Ide memisah workload ke 2 VPS (OVH untuk Chrome, Netcup RS 500 untuk bots) adalah menarik tapi menambah complexity management 2x.
+                    </p>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-green-50 border border-green-200 rounded p-4">
+                            <h4 class="font-semibold text-green-800 mb-2">✅ Benefits</h4>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• Failure domain isolation</li>
+                                <li>• Separate scaling paths</li>
+                                <li>• Total RAM 12GB (8+4)</li>
+                            </ul>
+                        </div>
+                        <div class="bg-red-50 border border-red-200 rounded p-4">
+                            <h4 class="font-semibold text-red-800 mb-2">❌ Drawbacks</h4>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• Management complexity</li>
+                                <li>• Network latency overhead</li>
+                                <li>• Resource fragmentation</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-4">
+                        <strong>Verdict:</strong> Not recommended untuk simplicity. Single Netcup RS 1000 G12 sudah sangat capable.
+                    </p>
+                </div>
+
+                <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-200">
+                    <h3 class="text-xl font-bold mb-4">🎯 Final Takeaways</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold mb-3">Apa yang SUDAH BENAR:</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li>✅ Metodologi fokus IOPS & CPU throttling</li>
+                                <li>✅ Netcup RS 1000 G12 sebagai #1</li>
+                                <li>✅ Penolakan Contabo untuk I/O intensive</li>
+                                <li>✅ Identifikasi Hetzner throttling</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-3">Apa yang DITAMBAHKAN:</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li>🆕 OVH IOPS correction (~20K bukan 10-15K)</li>
+                                <li>🆕 Hostinger KVM 2 sebagai entry #3</li>
+                                <li>🆕 Payment & verification gotchas</li>
+                                <li>🆕 ARM compatibility clarification</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center">
                 <p class="text-sm mb-4">
