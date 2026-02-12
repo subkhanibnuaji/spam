@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Store, Map, ClipboardCheck } from "lucide-react";
+import { LayoutGrid, Store, Map, ClipboardCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
-  { href: "/", label: "Home", icon: Home },
+  { href: "/", label: "Home", icon: LayoutGrid },
   { href: "/shops", label: "Shops", icon: Store },
   { href: "/trip-planner", label: "Trip", icon: Map },
   { href: "/presensi", label: "Presensi", icon: ClipboardCheck },

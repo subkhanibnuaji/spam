@@ -4,9 +4,9 @@ import { Header } from "@/components/layout/header";
 import { MobileNav } from "@/components/layout/mobile-nav";
 
 export const metadata: Metadata = {
-  title: "Surface Repair Finder Jakarta",
+  title: "Super App",
   description:
-    "Comprehensive database of Microsoft Surface repair shops in Jakarta with intelligent trip planning",
+    "Super App - Jakarta Surface Repair Route Planner & Presensi",
 };
 
 export default function RootLayout({

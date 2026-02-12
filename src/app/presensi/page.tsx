@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { CalendarDays } from "lucide-react";
+import Link from "next/link";
+import { CalendarDays, History } from "lucide-react";
 import { MonthPicker } from "@/components/presensi/month-picker";
 import { EditAttendanceDialog } from "@/components/presensi/edit-attendance-dialog";
 import {
@@ -69,13 +70,22 @@ export default function PresensiPage() {
             {getMonthName(selectedMonth)} {selectedYear}
           </span>
         </h1>
-        <button
-          onClick={() => setMonthPickerOpen(true)}
-          className="rounded-lg p-1.5 text-teal-600 transition-colors hover:bg-teal-50"
-          aria-label="Pilih bulan"
-        >
-          <CalendarDays className="h-6 w-6" />
-        </button>
+        <div className="flex items-center gap-1">
+          <Link
+            href="/presensi/history"
+            className="rounded-lg p-1.5 text-teal-600 transition-colors hover:bg-teal-50"
+            aria-label="History Presensi"
+          >
+            <History className="h-6 w-6" />
+          </Link>
+          <button
+            onClick={() => setMonthPickerOpen(true)}
+            className="rounded-lg p-1.5 text-teal-600 transition-colors hover:bg-teal-50"
+            aria-label="Pilih bulan"
+          >
+            <CalendarDays className="h-6 w-6" />
+          </button>
+        </div>
       </div>
 
       {/* ===== Records List ===== */}

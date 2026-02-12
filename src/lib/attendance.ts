@@ -120,7 +120,7 @@ export function isEditable(dateStr: string): boolean {
 
 // ===== Storage =====
 
-const STORAGE_KEY = "presensi_data_v2";
+const STORAGE_KEY = "presensi_data_v3";
 
 export function getAllAttendanceData(): Record<string, AttendanceDay> {
   if (typeof window === "undefined") return {};
@@ -162,6 +162,30 @@ export function getMonthAttendance(
   return result;
 }
 
+// ===== Time helpers =====
+
+export function timeToMinutes(time: string): number {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+}
+
+export function minutesToHHMM(mins: number): string {
+  if (mins <= 0) return "";
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
+export function minutesToTotalHHMM(mins: number): string {
+  const h = Math.floor(Math.abs(mins) / 60);
+  const m = Math.abs(mins) % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
+export function toISODateStr(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 // ===== Seed data matching the screenshots =====
 
 interface SeedEntry {
@@ -184,27 +208,27 @@ const SEED: Record<string, SeedEntry> = {
   "2026-02-03": { status: "WFO", datang: "07:25", pulang: "16:26" },
   "2026-02-02": { status: "WFO", datang: "07:24", pulang: "16:08" },
   "2026-02-01": { status: "Tidak Hadir", datang: null, pulang: null },
-  // Januari 2026
+  // Januari 2026 (synced with Google Sheets export)
   "2026-01-31": { status: "Tidak Hadir", datang: null, pulang: null },
-  "2026-01-30": { status: "WFO", datang: "07:15", pulang: "16:20" },
-  "2026-01-29": { status: "WFO", datang: "07:28", pulang: "16:05" },
-  "2026-01-28": { status: "WFO", datang: "07:22", pulang: "16:15" },
-  "2026-01-27": { status: "WFO", datang: "07:10", pulang: "16:30" },
-  "2026-01-26": { status: "WFO", datang: "07:20", pulang: "16:08" },
+  "2026-01-30": { status: "WFO", datang: "07:22", pulang: "17:15" },
+  "2026-01-29": { status: "WFO", datang: "07:18", pulang: "16:00" },
+  "2026-01-28": { status: "WFO", datang: "07:02", pulang: "18:20" },
+  "2026-01-27": { status: "WFO", datang: "05:44", pulang: "17:00" },
+  "2026-01-26": { status: "WFO", datang: "07:19", pulang: "16:12" },
   "2026-01-25": { status: "Tidak Hadir", datang: null, pulang: null },
   "2026-01-24": { status: "Tidak Hadir", datang: null, pulang: null },
-  "2026-01-23": { status: "WFO", datang: "07:31", pulang: "17:00" },
-  "2026-01-22": { status: "WFO", datang: "07:18", pulang: "16:10" },
-  "2026-01-21": { status: "WFO", datang: "07:25", pulang: "16:22" },
-  "2026-01-20": { status: "WFO", datang: "07:12", pulang: "16:05" },
-  "2026-01-19": { status: "WFO", datang: "07:08", pulang: "16:18" },
+  "2026-01-23": { status: "WFO", datang: "07:19", pulang: "16:34" },
+  "2026-01-22": { status: "WFO", datang: "07:26", pulang: "17:14" },
+  "2026-01-21": { status: "WFO", datang: "07:17", pulang: "16:15" },
+  "2026-01-20": { status: "WFO", datang: "07:17", pulang: "17:51" },
+  "2026-01-19": { status: "WFO", datang: "07:11", pulang: "16:50" },
   "2026-01-18": { status: "Tidak Hadir", datang: null, pulang: null },
   "2026-01-17": { status: "Tidak Hadir", datang: null, pulang: null },
-  "2026-01-16": { status: "WFO", datang: "07:29", pulang: "16:35" },
-  "2026-01-15": { status: "WFO", datang: "07:20", pulang: "16:10" },
-  "2026-01-14": { status: "WFO", datang: "07:05", pulang: "16:00" },
-  "2026-01-13": { status: "WFO", datang: "07:18", pulang: "16:25" },
-  "2026-01-12": { status: "WFO", datang: "07:22", pulang: "16:12" },
+  "2026-01-16": { status: "Tidak Hadir", datang: null, pulang: null },
+  "2026-01-15": { status: "WFO", datang: "07:14", pulang: "16:29" },
+  "2026-01-14": { status: "WFO", datang: "07:21", pulang: "16:13" },
+  "2026-01-13": { status: "WFO", datang: "07:17", pulang: "18:15" },
+  "2026-01-12": { status: "WFO", datang: "07:22", pulang: "16:21" },
   "2026-01-11": { status: "Tidak Hadir", datang: null, pulang: null },
   "2026-01-10": { status: "Tidak Hadir", datang: null, pulang: null },
   "2026-01-09": { status: "WFO", datang: "07:35", pulang: "16:45" },
