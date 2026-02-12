@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { CalendarDays, Pencil } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import { MonthPicker } from "@/components/presensi/month-picker";
 import { EditAttendanceDialog } from "@/components/presensi/edit-attendance-dialog";
 import {
@@ -136,12 +136,15 @@ function AttendanceCard({
     record.status === "Sakit";
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+    <div
+      className={`rounded-xl border border-gray-200 bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${editable && !isAbsent ? "cursor-pointer active:bg-gray-50" : ""}`}
+      onClick={editable && !isAbsent ? onEditClick : undefined}
+    >
       {/* Row 1: Day name + date (left) | Status badge (right) */}
       <div className="mb-3 flex items-start justify-between gap-2">
         <div className="min-w-0">
           <span className="font-bold text-gray-900">{getDayName(date)} </span>
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-500">
             {formatDateDisplay(date)}
           </span>
         </div>
@@ -152,11 +155,11 @@ function AttendanceCard({
       <div className="grid grid-cols-2 gap-4">
         {/* DATANG */}
         <div>
-          <p className="mb-1 text-xs font-bold tracking-wide text-gray-900">
+          <p className="mb-1 text-xs font-bold tracking-wide text-gray-800">
             DATANG
           </p>
           <div className="flex items-center gap-2">
-            <span className="text-sm tabular-nums text-gray-800">
+            <span className="text-sm tabular-nums text-gray-700">
               {record.datang.time || "--:--"}
             </span>
             <TimeBadge
@@ -168,11 +171,11 @@ function AttendanceCard({
 
         {/* PULANG */}
         <div>
-          <p className="mb-1 text-xs font-bold tracking-wide text-gray-900">
+          <p className="mb-1 text-xs font-bold tracking-wide text-gray-800">
             PULANG
           </p>
           <div className="flex items-center gap-2">
-            <span className="text-sm tabular-nums text-gray-800">
+            <span className="text-sm tabular-nums text-gray-700">
               {record.pulang.time || "--:--"}
             </span>
             <TimeBadge
@@ -183,7 +186,7 @@ function AttendanceCard({
         </div>
       </div>
 
-      {/* Row 3: Adjustment button for absent days */}
+      {/* Row 3: Adjustment button - only for Tidak Hadir cards (exactly like screenshot) */}
       {isAbsent && editable && (
         <div className="mt-3 flex justify-end">
           <button
@@ -197,22 +200,6 @@ function AttendanceCard({
           </button>
         </div>
       )}
-
-      {/* Edit indicator for editable WFO cards */}
-      {!isAbsent && editable && (
-        <div className="mt-3 flex justify-end">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onEditClick();
-            }}
-            className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium text-teal-600 transition-colors hover:bg-teal-50 active:bg-teal-100"
-          >
-            <Pencil className="h-3 w-3" />
-            Edit
-          </button>
-        </div>
-      )}
     </div>
   );
 }
@@ -223,7 +210,7 @@ function AttendanceCard({
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    WFO: "bg-gray-800 text-white",
+    WFO: "bg-green-700 text-white",
     WFH: "bg-blue-600 text-white",
     Dinas: "bg-indigo-600 text-white",
     Cuti: "bg-amber-500 text-white",
@@ -248,12 +235,12 @@ function TimeBadge({ badge, color }: { badge: string; color: string }) {
   const colorMap: Record<string, string> = {
     green: "bg-green-600 text-white",
     red: "bg-red-500 text-white",
-    gray: "bg-gray-300 text-gray-700",
+    gray: "bg-gray-200 text-gray-600",
   };
 
   return (
     <span
-      className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold leading-tight ${colorMap[color] || "bg-gray-300 text-gray-700"}`}
+      className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold leading-tight ${colorMap[color] || "bg-gray-200 text-gray-600"}`}
     >
       {badge}
     </span>
