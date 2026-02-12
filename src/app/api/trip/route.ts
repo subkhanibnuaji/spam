@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { getClustersByIds, getShopsByIds } from "@/lib/data";
 import { optimizeRoute, generateTimeline } from "@/lib/trip-calculator";
 
 export async function POST(request: NextRequest) {
@@ -36,17 +36,12 @@ export async function POST(request: NextRequest) {
 
     // Fetch selected clusters with their shops
     const clusters = selectedClusterIds.length > 0
-      ? await prisma.cluster.findMany({
-          where: { id: { in: selectedClusterIds } },
-          include: { shops: true },
-        })
+      ? getClustersByIds(selectedClusterIds)
       : [];
 
     // Fetch individual selected shops
     const individualShops = selectedShopIds.length > 0
-      ? await prisma.shop.findMany({
-          where: { id: { in: selectedShopIds } },
-        })
+      ? getShopsByIds(selectedShopIds)
       : [];
 
     // Build trip stops array for the route optimizer
@@ -106,10 +101,10 @@ export async function POST(request: NextRequest) {
       generateTimeline(startLat, startLng, startTime, optimizedStops, transportMode);
 
     // Build lookup maps for clusters and shops
-    const clusterMap = new Map<string, (typeof clusters)[0]>(
+    const clusterMap = new Map(
       clusters.map((c) => [c.id, c])
     );
-    const shopMap = new Map<string, (typeof individualShops)[0]>(
+    const shopMap = new Map(
       individualShops.map((s) => [s.id, s])
     );
 
@@ -138,40 +133,7 @@ export async function POST(request: NextRequest) {
       allWarnings.push(...stop.warnings);
     }
 
-    // Build selectedItems for storage
-    const selectedItems = JSON.stringify({
-      clusterIds: selectedClusterIds,
-      shopIds: selectedShopIds,
-    });
-
-    // Build routeData for storage
-    const routeData = JSON.stringify({
-      totalDistance,
-      totalDuration,
-      estimatedEndTime,
-      stops: responseStops,
-    });
-
-    // Try to save trip to database (may fail on read-only filesystems like Vercel)
-    let tripId = "temp-" + Date.now();
-    try {
-      const trip = await prisma.tripPlan.create({
-        data: {
-          startAddress: `${startLat},${startLng}`,
-          startLat,
-          startLng,
-          startTime,
-          transportMode,
-          selectedItems,
-          routeData,
-          totalDistance,
-          totalDuration,
-        },
-      });
-      tripId = trip.id;
-    } catch {
-      // Database is read-only (e.g. Vercel deployment), skip saving
-    }
+    const tripId = "trip-" + Date.now();
 
     const response = {
       tripId,

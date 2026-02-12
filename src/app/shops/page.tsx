@@ -84,7 +84,7 @@ function ShopsContent() {
     params.set("limit", "100");
 
     try {
-      const res = await fetch(`/betulinlaptop/api/shops?${params.toString()}`);
+      const res = await fetch(`/api/shops?${params.toString()}`);
       const data: ShopsResponse = await res.json();
 
       let filtered = data.data;

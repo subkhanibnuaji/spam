@@ -84,7 +84,7 @@ export default function TripPlannerPage() {
 
   async function fetchClusters() {
     try {
-      const res = await fetch("/betulinlaptop/api/clusters");
+      const res = await fetch("/api/clusters");
       const data = await res.json();
       setClusters(data);
     } catch (error) {
@@ -128,7 +128,7 @@ export default function TripPlannerPage() {
     if (selectedClusterIds.size === 0) return;
     setGenerating(true);
     try {
-      const res = await fetch("/betulinlaptop/api/trip", {
+      const res = await fetch("/api/trip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
