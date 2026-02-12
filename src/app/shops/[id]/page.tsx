@@ -19,7 +19,7 @@ import {
   XCircle,
   Info,
 } from "lucide-react";
-import { prisma } from "@/lib/db";
+import { getShopById } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,20 +35,12 @@ import {
   isOpenNow,
 } from "@/lib/utils";
 
-async function getShop(id: string) {
-  const shop = await prisma.shop.findUnique({
-    where: { id },
-    include: { cluster: true },
-  });
-  return shop;
-}
-
 export default async function ShopDetailPage({
   params,
 }: {
   params: { id: string };
 }) {
-  const shop = await getShop(params.id);
+  const shop = getShopById(params.id);
 
   if (!shop) {
     notFound();

@@ -18,41 +18,31 @@ import {
   MessageCircle,
   ChevronRight,
 } from "lucide-react";
-import { prisma } from "@/lib/db";
+import {
+  getShopCount,
+  getClusterCount,
+  getShopsByTierGrouped,
+  getAvgRating,
+  getAllShopsWithCluster,
+} from "@/lib/data";
 import { TIER_CONFIG, TierKey, DEFAULT_START } from "@/lib/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { parseJsonArray, calculateDistance } from "@/lib/utils";
 
-async function getStats() {
-  const [totalShops, clusters, tierCounts, allShops] = await Promise.all([
-    prisma.shop.count(),
-    prisma.cluster.count(),
-    prisma.shop.groupBy({
-      by: ["tier"],
-      _count: { tier: true },
-    }),
-    prisma.shop.findMany({
-      include: { cluster: true },
-      orderBy: { googleRating: "desc" },
-    }),
-  ]);
-
-  const avgRating = await prisma.shop.aggregate({
-    _avg: { googleRating: true },
-  });
-
-  const tierCountMap: Record<string, number> = {};
-  for (const t of tierCounts) {
-    tierCountMap[t.tier] = t._count.tier;
-  }
+function getStats() {
+  const totalShops = getShopCount();
+  const clusterCount = getClusterCount();
+  const tierCountMap = getShopsByTierGrouped();
+  const avgRating = getAvgRating();
+  const allShops = getAllShopsWithCluster();
 
   // Get current hour to check open status
   const now = new Date();
   const currentHour = now.getHours();
 
-  // Count open now (simplified - assuming shops with 10:00-20:00 are open between those hours)
+  // Count open now
   const openNow = allShops.filter(shop => {
     try {
       const hours = JSON.parse(shop.operatingHours);
@@ -67,13 +57,9 @@ async function getStats() {
     }
   }).length;
 
-  // Get perfect rated shops
   const perfectRated = allShops.filter(s => s.googleRating === 5.0);
-
-  // Get Surface specialists (tier 1)
   const surfaceSpecialists = allShops.filter(s => s.tier === "1");
 
-  // Get closest shops
   const shopsWithDistance = allShops.map(shop => ({
     ...shop,
     distance: shop.latitude && shop.longitude
@@ -83,9 +69,9 @@ async function getStats() {
 
   return {
     totalShops,
-    clusterCount: clusters,
+    clusterCount,
     surfaceSpecialistCount: tierCountMap["1"] || 0,
-    avgRating: avgRating._avg.googleRating || 0,
+    avgRating,
     surfaceSpecialists,
     tierCountMap,
     openNow,
@@ -95,8 +81,10 @@ async function getStats() {
   };
 }
 
-export default async function HomePage() {
-  const stats = await getStats();
+export const dynamic = "force-dynamic";
+
+export default function HomePage() {
+  const stats = getStats();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
@@ -246,7 +234,6 @@ export default async function HomePage() {
           Top Picks
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Best Overall */}
           <Card className="border-l-4 border-l-red-500">
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2">
@@ -274,7 +261,6 @@ export default async function HomePage() {
             </CardContent>
           </Card>
 
-          {/* Closest */}
           <Card className="border-l-4 border-l-green-500">
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2">
@@ -304,7 +290,6 @@ export default async function HomePage() {
             </CardContent>
           </Card>
 
-          {/* Highest Rated */}
           <Card className="border-l-4 border-l-yellow-500">
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2">
@@ -454,7 +439,6 @@ export default async function HomePage() {
           </CardHeader>
           <CardContent className="pt-0">
             <div className="grid md:grid-cols-2 gap-6">
-              {/* Checklist */}
               <div>
                 <h4 className="font-medium text-sm mb-2 text-amber-900">Before You Go Checklist:</h4>
                 <ul className="space-y-1.5 text-sm text-amber-800">
@@ -480,7 +464,6 @@ export default async function HomePage() {
                   </li>
                 </ul>
               </div>
-              {/* Price Estimate */}
               <div>
                 <h4 className="font-medium text-sm mb-2 text-amber-900">Price Estimates:</h4>
                 <ul className="space-y-1.5 text-sm text-amber-800">

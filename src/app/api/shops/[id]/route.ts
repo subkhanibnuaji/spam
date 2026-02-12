@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { getShopById } from "@/lib/data";
 
 export async function GET(
   request: NextRequest,
@@ -7,11 +7,7 @@ export async function GET(
 ) {
   try {
     const { id } = params;
-
-    const shop = await prisma.shop.findUnique({
-      where: { id },
-      include: { cluster: true },
-    });
+    const shop = getShopById(id);
 
     if (!shop) {
       return NextResponse.json(

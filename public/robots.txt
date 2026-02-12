@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://spam-seven-iota.vercel.app/sitemap.xml
