@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Store, Map } from "lucide-react";
+import { Home, Store, Map, ClipboardCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
   { href: "/", label: "Home", icon: Home },
   { href: "/shops", label: "Shops", icon: Store },
   { href: "/trip-planner", label: "Trip", icon: Map },
+  { href: "/presensi", label: "Presensi", icon: ClipboardCheck },
 ];
 
 export function MobileNav() {

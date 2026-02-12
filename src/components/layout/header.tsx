@@ -3,13 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Wrench, MapPin, Store, Navigation, Menu, X } from "lucide-react";
+import { Wrench, MapPin, Store, Navigation, Menu, X, ClipboardCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/", label: "Home", icon: MapPin },
   { href: "/shops", label: "Shops", icon: Store },
   { href: "/trip-planner", label: "Trip Planner", icon: Navigation },
+  { href: "/presensi", label: "Presensi", icon: ClipboardCheck },
 ];
 
 export function Header() {
