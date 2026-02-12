@@ -3,11 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Wrench, MapPin, Store, Navigation, Menu, X, ClipboardCheck } from "lucide-react";
+import { LayoutGrid, Store, Navigation, Menu, X, ClipboardCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { href: "/", label: "Home", icon: MapPin },
+  { href: "/", label: "Home", icon: LayoutGrid },
   { href: "/shops", label: "Shops", icon: Store },
   { href: "/trip-planner", label: "Trip Planner", icon: Navigation },
   { href: "/presensi", label: "Presensi", icon: ClipboardCheck },
@@ -29,9 +29,9 @@ export function Header() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <Wrench className="h-6 w-6 text-primary" />
+          <LayoutGrid className="h-6 w-6 text-primary" />
           <span className="text-lg font-bold text-foreground">
-            Surface Repair Finder Jakarta
+            Super App
           </span>
         </Link>
 

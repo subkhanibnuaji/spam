@@ -428,7 +428,7 @@ export default function HistoryPresensiPage() {
           </Button>
           <Button
             onClick={loadData}
-            className="gap-1.5 bg-teal-600 text-sm hover:bg-teal-700"
+            className="gap-1.5 bg-green-500 text-sm hover:bg-green-600"
             size="sm"
           >
             <Search className="h-4 w-4" />
@@ -441,47 +441,47 @@ export default function HistoryPresensiPage() {
       <div className="overflow-x-auto px-4 pb-8 sm:px-6">
         <table className="w-full min-w-[1100px] border-collapse text-sm">
           <thead>
-            <tr className="bg-teal-700 text-white">
-              <th className="border border-teal-600 px-2 py-2.5 text-center text-xs font-semibold">
+            <tr className="bg-green-500 text-white">
+              <th className="border border-green-400 px-2 py-2.5 text-center text-xs font-semibold">
                 No
               </th>
-              <th className="border border-teal-600 px-2 py-2.5 text-left text-xs font-semibold">
+              <th className="border border-green-400 px-2 py-2.5 text-left text-xs font-semibold">
                 Tanggal
               </th>
-              <th className="border border-teal-600 px-2 py-2.5 text-center text-xs font-semibold">
+              <th className="border border-green-400 px-2 py-2.5 text-center text-xs font-semibold">
                 Jadwal
               </th>
-              <th className="border border-teal-600 px-2 py-2.5 text-center text-xs font-semibold">
+              <th className="border border-green-400 px-2 py-2.5 text-center text-xs font-semibold">
                 Masuk
               </th>
-              <th className="border border-teal-600 px-2 py-2.5 text-center text-xs font-semibold">
+              <th className="border border-green-400 px-2 py-2.5 text-center text-xs font-semibold">
                 Keluar
               </th>
-              <th className="border border-teal-600 px-2 py-2.5 text-center text-xs font-semibold">
+              <th className="border border-green-400 px-2 py-2.5 text-center text-xs font-semibold">
                 Datang
                 <br />
                 Awal
               </th>
-              <th className="border border-teal-600 px-2 py-2.5 text-center text-xs font-semibold">
+              <th className="border border-green-400 px-2 py-2.5 text-center text-xs font-semibold">
                 Terlambat
               </th>
-              <th className="border border-teal-600 px-2 py-2.5 text-center text-xs font-semibold">
+              <th className="border border-green-400 px-2 py-2.5 text-center text-xs font-semibold">
                 Pulang
                 <br />
                 Awal
               </th>
-              <th className="border border-teal-600 px-2 py-2.5 text-center text-xs font-semibold">
+              <th className="border border-green-400 px-2 py-2.5 text-center text-xs font-semibold">
                 Pulang
                 <br />
                 Lebih
               </th>
-              <th className="border border-teal-600 px-2 py-2.5 text-center text-xs font-semibold">
+              <th className="border border-green-400 px-2 py-2.5 text-center text-xs font-semibold">
                 Durasi
               </th>
-              <th className="border border-teal-600 px-2 py-2.5 text-left text-xs font-semibold">
+              <th className="border border-green-400 px-2 py-2.5 text-left text-xs font-semibold">
                 Detail
               </th>
-              <th className="border border-teal-600 px-2 py-2.5 text-center text-xs font-semibold">
+              <th className="border border-green-400 px-2 py-2.5 text-center text-xs font-semibold">
                 Status
               </th>
             </tr>
@@ -502,7 +502,7 @@ export default function HistoryPresensiPage() {
                     {row.dayName}, {formatDateDisplay(row.date)}
                   </div>
                   {row.location && (
-                    <div className="text-[10px] text-teal-600">
+                    <div className="text-[10px] text-green-500">
                       {row.location}
                     </div>
                   )}
@@ -516,7 +516,7 @@ export default function HistoryPresensiPage() {
                 <td className="border border-gray-200 px-2 py-2 text-center text-xs font-medium">
                   {row.keluar || "-"}
                 </td>
-                <td className="border border-gray-200 px-2 py-2 text-center text-xs text-green-700">
+                <td className="border border-gray-200 px-2 py-2 text-center text-xs text-green-500">
                   {minutesToHHMM(row.datangAwal)}
                 </td>
                 <td className="border border-gray-200 px-2 py-2 text-center text-xs text-red-600">
@@ -539,7 +539,7 @@ export default function HistoryPresensiPage() {
                   {isEditable(row.dateStr) && (
                     <button
                       onClick={() => handleAdjustment(row)}
-                      className="rounded border border-teal-500 px-2 py-1 text-[10px] font-medium text-teal-600 hover:bg-teal-50"
+                      className="rounded border border-green-400 px-2 py-1 text-[10px] font-medium text-green-500 hover:bg-green-50"
                     >
                       Adjustment
                     </button>
@@ -549,7 +549,7 @@ export default function HistoryPresensiPage() {
             ))}
 
             {/* Total row */}
-            <tr className="bg-teal-50 font-semibold">
+            <tr className="bg-green-50 font-semibold">
               <td
                 colSpan={2}
                 className="border border-gray-200 px-2 py-2.5 text-xs font-bold text-gray-800"
@@ -561,7 +561,7 @@ export default function HistoryPresensiPage() {
               </td>
               <td className="border border-gray-200 px-2 py-2.5" />
               <td className="border border-gray-200 px-2 py-2.5" />
-              <td className="border border-gray-200 px-2 py-2.5 text-center text-xs text-green-700">
+              <td className="border border-gray-200 px-2 py-2.5 text-center text-xs text-green-500">
                 {minutesToTotalHHMM(totals.datangAwal)}
               </td>
               <td className="border border-gray-200 px-2 py-2.5 text-center text-xs text-red-600">
@@ -576,7 +576,7 @@ export default function HistoryPresensiPage() {
               <td className="border border-gray-200 px-2 py-2.5 text-center text-xs">
                 {minutesToTotalHHMM(totals.durasi)}
               </td>
-              <td className="border border-gray-200 px-2 py-2.5 text-xs text-teal-700">
+              <td className="border border-gray-200 px-2 py-2.5 text-xs text-green-600">
                 Capaian Presensi {capaian}%
               </td>
               <td className="border border-gray-200 px-2 py-2.5" />
