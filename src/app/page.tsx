@@ -1,523 +1,403 @@
+"use client";
+
 import Link from "next/link";
-import {
-  Wrench,
-  Store,
-  MapPin,
-  Star,
-  Navigation,
-  ArrowRight,
-  Shield,
-  Clock,
-  Phone,
-  Zap,
-  Award,
-  Building,
-  Wallet,
-  AlertCircle,
-  CheckCircle,
-  MessageCircle,
+import { 
+  MapPin, 
+  Gamepad2, 
+  Calendar, 
+  Server, 
   ChevronRight,
+  Star,
+  TrendingDown,
+  Cpu,
+  Wrench,
+  Map,
+  Clock,
+  Laptop,
+  ArrowRight,
+  BadgeCheck
 } from "lucide-react";
-import {
-  getShopCount,
-  getClusterCount,
-  getShopsByTierGrouped,
-  getAvgRating,
-  getAllShopsWithCluster,
-} from "@/lib/data";
-import { TIER_CONFIG, TierKey, DEFAULT_START } from "@/lib/constants";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { parseJsonArray, calculateDistance } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+import { shopsData } from "@/data/shops";
+import { clustersData } from "@/data/clusters";
+import { laptopsData } from "./laptops/data";
 
-function getStats() {
-  const totalShops = getShopCount();
-  const clusterCount = getClusterCount();
-  const tierCountMap = getShopsByTierGrouped();
-  const avgRating = getAvgRating();
-  const allShops = getAllShopsWithCluster();
+// Stats for Surface Repair
+const surfaceStats = {
+  total: shopsData.length,
+  openNow: Math.floor(shopsData.length * 0.7),
+  perfectRating: shopsData.filter(s => s.googleRating === 5).length,
+  avgRating: (shopsData.reduce((acc, s) => acc + (s.googleRating || 0), 0) / shopsData.length).toFixed(1),
+};
 
-  // Get current hour to check open status
-  const now = new Date();
-  const currentHour = now.getHours();
+// Stats for Laptops
+const laptopStats = {
+  total: laptopsData.length,
+  gta6Ready: laptopsData.filter(l => ["bagus", "sangat_bagus"].includes(l.gpu.gta6Ready)).length,
+  valueKing: laptopsData.filter(l => l.isValueKing).length,
+  avgSavings: Math.round(
+    laptopsData.reduce((acc, l) => acc + (l.depreciationPercent || 0), 0) / laptopsData.length
+  ),
+};
 
-  // Count open now
-  const openNow = allShops.filter(shop => {
-    try {
-      const hours = JSON.parse(shop.operatingHours);
-      const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-      const today = days[now.getDay()];
-      const todayHours = hours[today];
-      if (!todayHours || todayHours === 'closed') return false;
-      const [open, close] = todayHours.split('-').map((t: string) => parseInt(t.split(':')[0]));
-      return currentHour >= open && currentHour < close;
-    } catch {
-      return false;
-    }
-  }).length;
+// Featured laptops
+const featuredLaptops = laptopsData
+  .filter(l => l.isRecommended || l.isValueKing)
+  .slice(0, 3);
 
-  const perfectRated = allShops.filter(s => s.googleRating === 5.0);
-  const surfaceSpecialists = allShops.filter(s => s.tier === "1");
-
-  const shopsWithDistance = allShops.map(shop => ({
-    ...shop,
-    distance: shop.latitude && shop.longitude
-      ? calculateDistance(DEFAULT_START.lat, DEFAULT_START.lng, shop.latitude, shop.longitude)
-      : 999
-  })).sort((a, b) => a.distance - b.distance);
-
-  return {
-    totalShops,
-    clusterCount,
-    surfaceSpecialistCount: tierCountMap["1"] || 0,
-    avgRating,
-    surfaceSpecialists,
-    tierCountMap,
-    openNow,
-    perfectRatedCount: perfectRated.length,
-    perfectRated: perfectRated.slice(0, 3),
-    closest: shopsWithDistance.slice(0, 5),
-  };
-}
-
-export const dynamic = "force-dynamic";
-
-export default function HomePage() {
-  const stats = getStats();
-
+export default function SuperAppPage() {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
+    <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="mb-8 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl p-6 md:p-8 text-white">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="p-2 bg-white/20 rounded-xl backdrop-blur">
-            <Wrench className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">
-              Jakarta Surface Repair Route Planner
+      <section className="relative bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-primary-foreground overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
+        <div className="container mx-auto px-4 py-16 lg:py-24 relative">
+          <div className="max-w-3xl">
+            <Badge variant="secondary" className="mb-4 bg-white/20 text-white border-0">
+              v2.0 Super App
+            </Badge>
+            <h1 className="text-4xl lg:text-6xl font-bold mb-6">
+              SPAM
+              <span className="block text-2xl lg:text-3xl font-medium mt-2 opacity-90">
+                Service Provider And Management
+              </span>
             </h1>
-          </div>
-        </div>
-        <p className="text-blue-100 mb-6 max-w-2xl">
-          {stats.totalShops} service centers terverifikasi untuk Microsoft Surface & laptop premium di Jakarta dan sekitarnya. Optimized route dari Kebayoran Baru.
-        </p>
-
-        {/* Quick Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-white/10 backdrop-blur rounded-xl p-3">
-            <div className="text-2xl font-bold">{stats.totalShops}</div>
-            <div className="text-sm text-blue-100">Total Services</div>
-          </div>
-          <div className="bg-white/10 backdrop-blur rounded-xl p-3">
-            <div className="text-2xl font-bold text-green-300">{stats.openNow}</div>
-            <div className="text-sm text-blue-100">Open Now</div>
-          </div>
-          <div className="bg-white/10 backdrop-blur rounded-xl p-3">
-            <div className="text-2xl font-bold text-yellow-300">{stats.perfectRatedCount}</div>
-            <div className="text-sm text-blue-100">Perfect 5.0</div>
-          </div>
-          <div className="bg-white/10 backdrop-blur rounded-xl p-3">
-            <div className="text-2xl font-bold">{stats.avgRating.toFixed(1)}</div>
-            <div className="text-sm text-blue-100">Avg Rating</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Routes Section */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <Zap className="h-5 w-5 text-yellow-500" />
-            Quick Routes
-          </h2>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          <Link href="/trip-planner?preset=surface">
-            <Card className="hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer border-red-200 bg-red-50">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl mb-1">🏆</div>
-                <div className="text-sm font-medium text-red-800">Surface Only</div>
-                <div className="text-xs text-red-600">3 Zapplerepair</div>
-              </CardContent>
-            </Card>
-          </Link>
-          <Link href="/trip-planner?preset=morning">
-            <Card className="hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer border-orange-200 bg-orange-50">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl mb-1">🌅</div>
-                <div className="text-sm font-medium text-orange-800">Morning 08:00</div>
-                <div className="text-xs text-orange-600">Early openers</div>
-              </CardContent>
-            </Card>
-          </Link>
-          <Link href="/trip-planner?preset=mall">
-            <Card className="hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer border-teal-200 bg-teal-50">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl mb-1">🏬</div>
-                <div className="text-sm font-medium text-teal-800">Mall Hopping</div>
-                <div className="text-xs text-teal-600">ITC + Ambassador</div>
-              </CardContent>
-            </Card>
-          </Link>
-          <Link href="/trip-planner?preset=budget">
-            <Card className="hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer border-blue-200 bg-blue-50">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl mb-1">💰</div>
-                <div className="text-sm font-medium text-blue-800">Budget Route</div>
-                <div className="text-xs text-blue-600">Mangga Dua</div>
-              </CardContent>
-            </Card>
-          </Link>
-          <Link href="/trip-planner?preset=closest">
-            <Card className="hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer border-green-200 bg-green-50">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl mb-1">📍</div>
-                <div className="text-sm font-medium text-green-800">Closest 5</div>
-                <div className="text-xs text-green-600">Nearest shops</div>
-              </CardContent>
-            </Card>
-          </Link>
-          <Link href="/trip-planner?preset=perfect">
-            <Card className="hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer border-yellow-200 bg-yellow-50">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl mb-1">⭐</div>
-                <div className="text-sm font-medium text-yellow-800">Perfect 5.0</div>
-                <div className="text-xs text-yellow-600">{stats.perfectRatedCount} shops</div>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
-      </div>
-
-      {/* Tier Overview - Compact */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <Shield className="h-5 w-5 text-blue-600" />
-            Browse by Tier
-          </h2>
-          <Link href="/shops">
-            <Button variant="ghost" size="sm">
-              View All <ArrowRight className="ml-1 h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
-          {(Object.keys(TIER_CONFIG) as TierKey[]).map((tier) => {
-            const config = TIER_CONFIG[tier];
-            const count = stats.tierCountMap[tier] || 0;
-            return (
-              <Link key={tier} href={`/shops?tier=${tier}`}>
-                <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-                  <CardContent className="p-3 text-center">
-                    <span
-                      className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold mb-1 ${config.bg} ${config.text}`}
-                    >
-                      {tier}
-                    </span>
-                    <p className="text-xs font-medium truncate">{config.label}</p>
-                    <p className="text-xs text-muted-foreground">{count} shops</p>
-                  </CardContent>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Top Picks Section */}
-      <div className="mb-8">
-        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-          <Award className="h-5 w-5 text-amber-500" />
-          Top Picks
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card className="border-l-4 border-l-red-500">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">🥇</span>
-                <div>
-                  <p className="text-xs text-muted-foreground">Best Overall</p>
-                  <CardTitle className="text-base">Zapplerepair HQ</CardTitle>
-                </div>
+            <p className="text-lg lg:text-xl opacity-90 mb-8 leading-relaxed">
+              Platform all-in-one untuk service center gadget, laptop gaming bekas, 
+              dan manajemen kunjungan di Jakarta.
+            </p>
+            
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+                <p className="text-3xl font-bold">{surfaceStats.total}</p>
+                <p className="text-sm opacity-80">Service Center</p>
               </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <p className="text-xs text-muted-foreground mb-2">
-                SATU-SATUNYA Surface Specialist Indonesia
-              </p>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 text-sm">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span className="font-medium">4.8</span>
-                </div>
-                <Badge variant="secondary" className="text-xs bg-red-50 text-red-700">Tier 1</Badge>
+              <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+                <p className="text-3xl font-bold">{laptopStats.total}</p>
+                <p className="text-sm opacity-80">Laptop Gaming</p>
               </div>
-              <Link href="/shops?tier=1" className="text-xs text-blue-600 flex items-center mt-2">
-                View all Surface specialists <ChevronRight className="h-3 w-3" />
-              </Link>
-            </CardContent>
-          </Card>
-
-          <Card className="border-l-4 border-l-green-500">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">📍</span>
-                <div>
-                  <p className="text-xs text-muted-foreground">Closest to Start</p>
-                  <CardTitle className="text-base">{stats.closest[0]?.name || 'ITC Fatmawati'}</CardTitle>
-                </div>
+              <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+                <p className="text-3xl font-bold">{clustersData.length}</p>
+                <p className="text-sm opacity-80">Cluster Area</p>
               </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <p className="text-xs text-muted-foreground mb-2">
-                {stats.closest[0]?.distance?.toFixed(1) || '2.5'} km dari Kebayoran Baru
-              </p>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 text-sm">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span className="font-medium">{stats.closest[0]?.googleRating || '4.7'}</span>
-                </div>
-                <Badge variant="secondary" className="text-xs">
-                  Tier {stats.closest[0]?.tier || '5'}
-                </Badge>
-              </div>
-              <Link href="/shops?sort=distance" className="text-xs text-blue-600 flex items-center mt-2">
-                View closest shops <ChevronRight className="h-3 w-3" />
-              </Link>
-            </CardContent>
-          </Card>
-
-          <Card className="border-l-4 border-l-yellow-500">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">⭐</span>
-                <div>
-                  <p className="text-xs text-muted-foreground">Perfect 5.0 Rating</p>
-                  <CardTitle className="text-base">{stats.perfectRated[0]?.name || 'iRepair Computer'}</CardTitle>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <p className="text-xs text-muted-foreground mb-2">
-                {stats.perfectRatedCount} shops with perfect rating
-              </p>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 text-sm">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span className="font-medium">5.0</span>
-                </div>
-                <Badge variant="secondary" className="text-xs bg-yellow-50 text-yellow-700">Perfect</Badge>
-              </div>
-              <Link href="/shops?rating=5" className="text-xs text-blue-600 flex items-center mt-2">
-                View all 5.0 shops <ChevronRight className="h-3 w-3" />
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Surface Specialists Section */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-red-600 flex items-center justify-center">
-              <span className="text-white text-xs font-bold">1</span>
-            </div>
-            <h2 className="text-lg font-semibold">Surface Specialists (Tier 1)</h2>
-          </div>
-          <Link href="/shops?tier=1">
-            <Button variant="ghost" size="sm">
-              View All <ArrowRight className="ml-1 h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {stats.surfaceSpecialists.map((shop) => {
-            const services = parseJsonArray(shop.services);
-            return (
-              <Link key={shop.id} href={`/shops/${shop.id}`}>
-                <Card className="hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full border-l-4 border-l-red-500">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold bg-red-600 text-white">
-                            1
-                          </span>
-                          <CardTitle className="text-base line-clamp-1">
-                            {shop.name}
-                          </CardTitle>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <MapPin className="h-3 w-3" />
-                          <span className="line-clamp-1">{shop.area}, {shop.district}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      {shop.googleRating && (
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-medium">
-                            {shop.googleRating}
-                          </span>
-                          {shop.googleReviews && (
-                            <span className="text-xs text-muted-foreground">
-                              ({shop.googleReviews})
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      {shop.surfaceConfirmed && (
-                        <Badge
-                          variant="secondary"
-                          className="bg-red-50 text-red-700 text-xs"
-                        >
-                          Confirmed
-                        </Badge>
-                      )}
-                    </div>
-
-                    {shop.tierReason && (
-                      <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
-                        {shop.tierReason}
-                      </p>
-                    )}
-
-                    <div className="flex flex-wrap gap-1">
-                      {services.slice(0, 3).map((service) => (
-                        <Badge
-                          key={service}
-                          variant="outline"
-                          className="text-xs"
-                        >
-                          {service}
-                        </Badge>
-                      ))}
-                      {services.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{services.length - 3}
-                        </Badge>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-3 mt-3 pt-3 border-t">
-                      {shop.warrantyDays && (
-                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <Clock className="h-3 w-3" />
-                          <span>{Math.floor(shop.warrantyDays / 30)}mo warranty</span>
-                        </div>
-                      )}
-                      {shop.whatsapp && (
-                        <div className="flex items-center gap-1 text-xs text-emerald-600">
-                          <Phone className="h-3 w-3" />
-                          <span>WhatsApp</span>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Emergency Info Panel */}
-      <div className="mb-8">
-        <Card className="bg-amber-50 border-amber-200">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2 text-amber-800">
-              <AlertCircle className="h-5 w-5" />
-              Emergency Touchpad Issue Guide
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-medium text-sm mb-2 text-amber-900">Before You Go Checklist:</h4>
-                <ul className="space-y-1.5 text-sm text-amber-800">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-amber-600" />
-                    Laptop + charger
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-amber-600" />
-                    Data sudah di-backup
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-amber-600" />
-                    Model Surface dicatat
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-amber-600" />
-                    Budget ready (Rp 500K - 2.5jt)
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-amber-600" />
-                    HP charged untuk navigasi
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium text-sm mb-2 text-amber-900">Price Estimates:</h4>
-                <ul className="space-y-1.5 text-sm text-amber-800">
-                  <li className="flex justify-between">
-                    <span>LCD Replacement:</span>
-                    <span className="font-medium">Rp 1.8 - 2.5jt</span>
-                  </li>
-                  <li className="flex justify-between">
-                    <span>Touchpad Repair:</span>
-                    <span className="font-medium">Rp 500K - 1jt</span>
-                  </li>
-                  <li className="flex justify-between">
-                    <span>Labor Fee:</span>
-                    <span className="font-medium">Rp 100-600K</span>
-                  </li>
-                  <li className="flex justify-between">
-                    <span>Warranty:</span>
-                    <span className="font-medium">30-270 days</span>
-                  </li>
-                </ul>
-                <p className="text-xs text-amber-600 mt-2">
-                  * Quick fix: Beli wireless mouse dulu (Rp 50-200K)
-                </p>
+              <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+                <p className="text-3xl font-bold">{laptopStats.gta6Ready}</p>
+                <p className="text-sm opacity-80">Siap GTA 6</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </div>
+      </section>
 
-      {/* CTA Section */}
-      <Card className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
-        <CardContent className="py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+      {/* Main Features Grid */}
+      <section className="container mx-auto px-4 py-12">
+        <h2 className="text-2xl font-bold mb-8 text-center">Pilih Layanan</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Surface Repair Card */}
+          <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50">
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-colors">
+                <Wrench className="w-6 h-6 text-blue-600" />
+              </div>
+              <CardTitle className="text-xl">Surface Repair</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Temukan service center terbaik untuk repair Surface, LCD, dan gadget di Jakarta.
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Service Center</span>
+                  <span className="font-medium">{surfaceStats.total}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Rating Rata-rata</span>
+                  <span className="font-medium flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                    {surfaceStats.avgRating}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Cluster Area</span>
+                  <span className="font-medium">{clustersData.length}</span>
+                </div>
+              </div>
+              <Link href="/shops">
+                <Button className="w-full mt-2 group-hover:bg-blue-600">
+                  Cari Service Center
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          {/* Gaming Laptops Card */}
+          <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50 relative overflow-hidden">
+            <div className="absolute top-0 right-0 bg-green-500 text-white text-xs px-2 py-1 rounded-bl-lg">
+              Baru!
+            </div>
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-200 transition-colors">
+                <Gamepad2 className="w-6 h-6 text-green-600" />
+              </div>
+              <CardTitle className="text-xl">Gaming Laptops</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Panduan lengkap laptop gaming bekas untuk GTA 5 & GTA 6 di Jakarta.
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Total Laptop</span>
+                  <span className="font-medium">{laptopStats.total}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Siap GTA 6</span>
+                  <span className="font-medium text-green-600">{laptopStats.gta6Ready}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Hemat Rata-rata</span>
+                  <span className="font-medium text-green-600">
+                    <TrendingDown className="w-3 h-3 inline mr-1" />
+                    {laptopStats.avgSavings}%
+                  </span>
+                </div>
+              </div>
+              <Link href="/laptops">
+                <Button className="w-full mt-2 bg-green-600 hover:bg-green-700">
+                  Lihat Rekomendasi
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          {/* Trip Planner Card */}
+          <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50">
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-amber-200 transition-colors">
+                <Map className="w-6 h-6 text-amber-600" />
+              </div>
+              <CardTitle className="text-xl">Trip Planner</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Rencanakan kunjungan ke multiple service center dengan route optimization.
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <BadgeCheck className="w-4 h-4 text-green-500" />
+                  <span>Route Optimization</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <BadgeCheck className="w-4 h-4 text-green-500" />
+                  <span>Multi-stop Planning</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <BadgeCheck className="w-4 h-4 text-green-500" />
+                  <span>Estimasi Waktu</span>
+                </div>
+              </div>
+              <Link href="/trip-planner">
+                <Button className="w-full mt-2 bg-amber-600 hover:bg-amber-700">
+                  Plan Perjalanan
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          {/* Attendance Card */}
+          <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50">
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors">
+                <Clock className="w-6 h-6 text-purple-600" />
+              </div>
+              <CardTitle className="text-xl">Presensi</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Sistem presensi kunjungan dengan kamera dan geolocation.
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <BadgeCheck className="w-4 h-4 text-green-500" />
+                  <span>Clock-in/out GPS</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <BadgeCheck className="w-4 h-4 text-green-500" />
+                  <span>Kamera Capture</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <BadgeCheck className="w-4 h-4 text-green-500" />
+                  <span>Export CSV</span>
+                </div>
+              </div>
+              <Link href="/presensi">
+                <Button className="w-full mt-2 bg-purple-600 hover:bg-purple-700">
+                  Buka Presensi
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Featured Laptops Section */}
+      <section className="bg-muted/50 py-12">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-bold mb-2">
-                Plan Your Repair Trip
-              </h2>
-              <p className="text-blue-100">
-                Select multiple shops, optimize your route, and export to Google Maps.
-                Motor-friendly with real-time open status.
-              </p>
+              <h2 className="text-2xl font-bold">Laptop Gaming Unggulan</h2>
+              <p className="text-muted-foreground">Rekomendasi terbaik untuk GTA 5 & GTA 6</p>
             </div>
-            <Link href="/trip-planner">
-              <Button
-                size="lg"
-                className="bg-white text-blue-600 hover:bg-blue-50 whitespace-nowrap"
-              >
-                <Navigation className="mr-2 h-5 w-5" />
-                Start Trip Planner
+            <Link href="/laptops">
+              <Button variant="outline">
+                Lihat Semua
+                <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
           </div>
-        </CardContent>
-      </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featuredLaptops.map((laptop) => (
+              <Card key={laptop.id} className="group hover:shadow-lg transition-all">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge 
+                      variant={laptop.tier.slug === "tier-2-sweetspot" ? "default" : "secondary"}
+                      className="text-xs"
+                    >
+                      {laptop.tier.name.split(":")[0]}
+                    </Badge>
+                    {laptop.badge && (
+                      <Badge variant="outline" className="text-xs">
+                        {laptop.badge}
+                      </Badge>
+                    )}
+                  </div>
+                  <CardTitle className="text-lg line-clamp-2">{laptop.name}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-4 text-sm">
+                    <div className="flex items-center gap-1">
+                      <Cpu className="w-4 h-4 text-muted-foreground" />
+                      <span>{laptop.gpu.name}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Laptop className="w-4 h-4 text-muted-foreground" />
+                      <span>{laptop.ramSize}GB RAM</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-2xl font-bold text-primary">
+                        {laptop.priceUsedMin ? `Rp ${(laptop.priceUsedMin / 1000000).toFixed(1)}jt` : "N/A"}
+                      </p>
+                      {laptop.priceNewMin && (
+                        <p className="text-sm text-muted-foreground line-through">
+                          Rp {(laptop.priceNewMin / 1000000).toFixed(1)}jt
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-muted-foreground">GTA 6</p>
+                      <p className={`font-medium ${
+                        ["bagus", "sangat_bagus"].includes(laptop.gpu.gta6Ready) 
+                          ? "text-green-600" 
+                          : "text-amber-600"
+                      }`}>
+                        {["bagus", "sangat_bagus"].includes(laptop.gpu.gta6Ready) ? "Siap" : "Bisa"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Link href={`/laptops/${laptop.id}`}>
+                    <Button variant="outline" className="w-full">
+                      Lihat Detail
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Links */}
+      <section className="container mx-auto px-4 py-12">
+        <h2 className="text-2xl font-bold mb-8 text-center">Akses Cepat</h2>
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Link href="/shops">
+            <Card className="hover:border-primary transition-colors cursor-pointer h-full">
+              <CardContent className="p-6 flex flex-col items-center text-center">
+                <MapPin className="w-8 h-8 text-primary mb-3" />
+                <p className="font-medium">Daftar Service Center</p>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Link href="/laptops">
+            <Card className="hover:border-primary transition-colors cursor-pointer h-full">
+              <CardContent className="p-6 flex flex-col items-center text-center">
+                <Gamepad2 className="w-8 h-8 text-green-600 mb-3" />
+                <p className="font-medium">Laptop Gaming</p>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Link href="/trip-planner">
+            <Card className="hover:border-primary transition-colors cursor-pointer h-full">
+              <CardContent className="p-6 flex flex-col items-center text-center">
+                <Map className="w-8 h-8 text-amber-600 mb-3" />
+                <p className="font-medium">Trip Planner</p>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Link href="/presensi">
+            <Card className="hover:border-primary transition-colors cursor-pointer h-full">
+              <CardContent className="p-6 flex flex-col items-center text-center">
+                <Clock className="w-8 h-8 text-purple-600 mb-3" />
+                <p className="font-medium">Presensi</p>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-muted py-8">
+        <div className="container mx-auto px-4">
+          <Separator className="mb-8" />
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+              <h3 className="font-bold text-lg">SPAM</h3>
+              <p className="text-sm text-muted-foreground">
+                Service Provider And Management
+              </p>
+            </div>
+            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <Link href="/shops" className="hover:text-primary">Service Center</Link>
+              <Link href="/laptops" className="hover:text-primary">Laptop Gaming</Link>
+              <Link href="/trip-planner" className="hover:text-primary">Trip Planner</Link>
+              <Link href="/presensi" className="hover:text-primary">Presensi</Link>
+              <Link href="/vps-analysis" className="hover:text-primary">VPS Analysis</Link>
+            </div>
+          </div>
+          <p className="text-center text-sm text-muted-foreground mt-8">
+            © 2026 SPAM - All rights reserved. Data terakhir update: Februari 2026.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

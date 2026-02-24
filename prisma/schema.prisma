@@ -7,6 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// =====================================================
+// CORE MODELS (EXISTING)
+// =====================================================
+
 model Shop {
   id                 String   @id @default(cuid())
   name               String
@@ -42,6 +46,7 @@ model Shop {
   lastVerified       DateTime?
   notes              String?
   cluster            Cluster? @relation(fields: [clusterId], references: [id])
+  laptopInventory    ShopLaptopInventory[]
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 }
@@ -75,4 +80,222 @@ model TripPlan {
   totalDistance  Float?
   totalDuration Int?
   createdAt     DateTime @default(now())
+}
+
+// =====================================================
+// LAPTOP GAMING MODELS (NEW)
+// =====================================================
+
+model GPU {
+  id                    String          @id @default(cuid())
+  name                  String
+  brand                 String          // NVIDIA, AMD
+  vram                  Int             // in GB
+  timeSpyScore          Int?
+  gta5Ultra1080p        String?         // FPS range like "85-100 FPS"
+  cyberpunkMedium1080p  String?
+  hogwartsMedium1080p   String?
+  gta6Ready             String          // "tidak", "marginal", "bagus", "sangat_bagus"
+  dlssVersion           String?         // "2.0", "3.0", "3.5"
+  architecture          String?         // Ampere, Ada Lovelace, RDNA2, RDNA3
+  tdp                   Int?            // Typical TDP in watts
+  laptops               LaptopGaming[]
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  
+  @@index([gta6Ready])
+  @@index([vram])
+}
+
+model LaptopTier {
+  id          String         @id @default(cuid())
+  name        String
+  slug        String         @unique
+  minBudget   Int            // in IDR
+  maxBudget   Int            // in IDR
+  description String
+  sortOrder   Int            @default(0)
+  laptops     LaptopGaming[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model LaptopGaming {
+  id              String   @id @default(cuid())
+  name            String
+  brand           String   // ASUS, Lenovo, Acer, MSI, HP, Dell
+  model           String
+  series          String?  // Legion, ROG, Predator, etc
+  year            Int
+  
+  // CPU
+  cpuBrand        String   // Intel, AMD
+  cpuModel        String   // i7-11800H, Ryzen 7 5800H, etc
+  cpuCores        Int?
+  cpuThreads      Int?
+  
+  // GPU
+  gpuId           String
+  gpu             GPU      @relation(fields: [gpuId], references: [id])
+  gpuWattage      Int?      // TGP in watts
+  
+  // RAM & Storage
+  ramSize         Int       // in GB
+  ramType         String?   // DDR4, DDR5
+  storageSize     Int       // in GB
+  storageType     String?   // NVMe, SATA SSD
+  
+  // Display
+  screenSize      Float?    // in inches
+  screenResolution String?  // 1920x1080, 2560x1600, etc
+  refreshRate     Int?      // 144, 165, 240, 300, 360
+  screenBrightness Int?     // in nits
+  panelType       String?   // IPS, OLED, Mini-LED
+  
+  // Build
+  weight          Float?    // in kg
+  buildMaterial   String?   // Plastic, Aluminum, Magnesium
+  
+  // Pricing
+  priceNewMin     Int?
+  priceNewMax     Int?
+  priceUsedMin    Int?
+  priceUsedMax    Int?
+  depreciationPercent Int?
+  
+  // Categorization
+  tierId          String
+  tier            LaptopTier @relation(fields: [tierId], references: [id])
+  ranking         Int?        // Ranking within tier
+  isRecommended   Boolean    @default(false)
+  isValueKing     Boolean    @default(false)
+  badge           String?     // "Value King", "Best Overall", etc
+  
+  // Performance Ratings (1-100)
+  gta5Rating      Int?
+  gta6Readiness   Int?        // 0-100 readiness score
+  valueScore      Int?        // Value for money score
+  
+  // Features
+  hasDlss         Boolean    @default(false)
+  hasAdvancedOptimus Boolean @default(false)
+  hasMuxSwitch    Boolean    @default(false)
+  coolingSolution String?     // AeroBlade, Vapor Chamber, etc
+  specialFeatures String?     // Liquid Metal, RGB, etc
+  
+  // Service Info
+  serviceCenterCountJakarta Int?
+  sparePartAvailability String? // "mudah", "sedang", "sulit"
+  commonIssues    String?
+  
+  // Content
+  description     String?
+  pros            String?     // JSON array
+  cons            String?     // JSON array
+  verdict         String?
+  
+  // Relationships
+  inventory       ShopLaptopInventory[]
+  images          LaptopImage[]
+  
+  // Metadata
+  dataSource      String?
+  lastVerified    DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  
+  @@index([gpuId])
+  @@index([tierId])
+  @@index([brand])
+  @@index([year])
+  @@index([gta6Readiness])
+  @@index([priceUsedMin, priceUsedMax])
+}
+
+model LaptopImage {
+  id          String       @id @default(cuid())
+  laptopId    String
+  laptop      LaptopGaming @relation(fields: [laptopId], references: [id], onDelete: Cascade)
+  url         String
+  alt         String?
+  isPrimary   Boolean      @default(false)
+  sortOrder   Int          @default(0)
+  createdAt   DateTime     @default(now())
+}
+
+model ShopLaptopInventory {
+  id              String       @id @default(cuid())
+  shopId          String
+  shop            Shop         @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  laptopId        String
+  laptop          LaptopGaming @relation(fields: [laptopId], references: [id], onDelete: Cascade)
+  condition       String       // "like_new", "excellent", "good", "fair"
+  price           Int
+  warrantyMonths  Int?
+  stock           Int          @default(1)
+  notes           String?
+  isAvailable     Boolean      @default(true)
+  listingUrl      String?
+  lastUpdated     DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  @@unique([shopId, laptopId, condition])
+  @@index([shopId])
+  @@index([laptopId])
+  @@index([isAvailable])
+}
+
+model GameRequirement {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  releaseYear     Int?
+  description     String?
+  
+  // Minimum Requirements
+  minCpu          String?
+  minGpu          String?
+  minRam          Int?
+  minStorage      Int?
+  minStorageType  String?
+  
+  // Recommended Requirements
+  recCpu          String?
+  recGpu          String?
+  recRam          Int?
+  recStorage      Int?
+  recStorageType  String?
+  
+  // Performance Targets
+  targetResolution String?
+  targetFps       Int?
+  
+  // Notes
+  importantNotes  String?
+  dlssSupported   Boolean  @default(false)
+  fsrSupported    Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model WhereToBuy {
+  id              String   @id @default(cuid())
+  name            String
+  type            String   // "marketplace", "physical_store", "instagram"
+  platform        String?  // "tokopedia", "olx", "shopee", "instagram"
+  url             String?
+  address         String?
+  district        String?
+  area            String?
+  phone           String?
+  instagram       String?
+  rating          Float?
+  reviewCount     Int?
+  isTrusted       Boolean  @default(false)
+  specialization  String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
