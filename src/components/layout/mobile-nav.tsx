@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutGrid, Store, Map, ClipboardCheck } from "lucide-react";
+import { LayoutGrid, Store, Map, ClipboardCheck, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
@@ -10,6 +10,7 @@ const tabs = [
   { href: "/shops", label: "Shops", icon: Store },
   { href: "/trip-planner", label: "Trip", icon: Map },
   { href: "/presensi", label: "Presensi", icon: ClipboardCheck },
+  { href: "/saas-clone-material", label: "Materi", icon: BookOpen },
 ];
 
 export function MobileNav() {

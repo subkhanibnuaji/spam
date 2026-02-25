@@ -3,7 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutGrid, Store, Navigation, Menu, X, ClipboardCheck, Gamepad2, Server } from "lucide-react";
+import {
+  LayoutGrid,
+  Store,
+  Navigation,
+  Menu,
+  X,
+  ClipboardCheck,
+  Gamepad2,
+  Server,
+  BookOpen,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -13,6 +23,7 @@ const navLinks = [
   { href: "/trip-planner", label: "Trip", icon: Navigation },
   { href: "/presensi", label: "Presensi", icon: ClipboardCheck },
   { href: "/vps-analysis", label: "VPS", icon: Server },
+  { href: "/saas-clone-material", label: "Materi", icon: BookOpen },
 ];
 
 export function Header() {
