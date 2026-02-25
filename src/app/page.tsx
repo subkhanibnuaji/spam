@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { 
-  MapPin, 
-  Gamepad2, 
-  Calendar, 
-  Server, 
+import {
+  MapPin,
+  Gamepad2,
+  Calendar,
+  Server,
   ChevronRight,
   Star,
   TrendingDown,
@@ -15,7 +15,9 @@ import {
   Clock,
   Laptop,
   ArrowRight,
-  BadgeCheck
+  BadgeCheck,
+  BookOpen,
+  Activity,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -81,8 +83,8 @@ export default function SuperAppPage() {
                 <p className="text-sm opacity-80">Laptop Gaming</p>
               </div>
               <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-                <p className="text-3xl font-bold">{clustersData.length}</p>
-                <p className="text-sm opacity-80">Cluster Area</p>
+                <p className="text-3xl font-bold">6</p>
+                <p className="text-sm opacity-80">Layanan Aktif</p>
               </div>
               <div className="bg-white/10 backdrop-blur rounded-lg p-4">
                 <p className="text-3xl font-bold">{laptopStats.gta6Ready}</p>
@@ -97,7 +99,7 @@ export default function SuperAppPage() {
       <section className="container mx-auto px-4 py-12">
         <h2 className="text-2xl font-bold mb-8 text-center">Pilih Layanan</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Surface Repair Card */}
           <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50">
             <CardHeader className="pb-4">
@@ -246,6 +248,85 @@ export default function SuperAppPage() {
               </Link>
             </CardContent>
           </Card>
+
+          {/* VPS Analysis Card */}
+          <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50 relative overflow-hidden">
+            <div className="absolute top-0 right-0 bg-violet-500 text-white text-xs px-2 py-1 rounded-bl-lg">
+              Baru!
+            </div>
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-violet-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-violet-200 transition-colors">
+                <Server className="w-6 h-6 text-violet-600" />
+              </div>
+              <CardTitle className="text-xl">VPS Analysis</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Perbandingan provider VPS untuk browser automation & workload 24/7.
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Provider Dibandingkan</span>
+                  <span className="font-medium">5 Provider</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Best IOPS</span>
+                  <span className="font-medium text-violet-600 flex items-center gap-1">
+                    <Activity className="w-3 h-3" />
+                    93K (Netcup)
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Budget Target</span>
+                  <span className="font-medium">~$13/bln</span>
+                </div>
+              </div>
+              <Link href="/vps-analysis">
+                <Button className="w-full mt-2 bg-violet-600 hover:bg-violet-700">
+                  Lihat Analisis
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          {/* SaaS Material Card */}
+          <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50 relative overflow-hidden">
+            <div className="absolute top-0 right-0 bg-cyan-500 text-white text-xs px-2 py-1 rounded-bl-lg">
+              Baru!
+            </div>
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-cyan-200 transition-colors">
+                <BookOpen className="w-6 h-6 text-cyan-600" />
+              </div>
+              <CardTitle className="text-xl">Materi SaaS</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Riset & materi clone SaaS terkurasi: Linear, Notion, Slack, dan 40+ platform.
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Platform Terkurasi</span>
+                  <span className="font-medium">40+ Platform</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Zona Belajar Terbaik</span>
+                  <span className="font-medium text-cyan-600">8-12 minggu</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Format</span>
+                  <span className="font-medium">PDF + PPT</span>
+                </div>
+              </div>
+              <Link href="/saas-clone-material">
+                <Button className="w-full mt-2 bg-cyan-600 hover:bg-cyan-700">
+                  Buka Materi
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -335,39 +416,57 @@ export default function SuperAppPage() {
       <section className="container mx-auto px-4 py-12">
         <h2 className="text-2xl font-bold mb-8 text-center">Akses Cepat</h2>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <Link href="/shops">
             <Card className="hover:border-primary transition-colors cursor-pointer h-full">
-              <CardContent className="p-6 flex flex-col items-center text-center">
-                <MapPin className="w-8 h-8 text-primary mb-3" />
-                <p className="font-medium">Daftar Service Center</p>
+              <CardContent className="p-4 flex flex-col items-center text-center">
+                <MapPin className="w-7 h-7 text-primary mb-2" />
+                <p className="font-medium text-sm">Service Center</p>
               </CardContent>
             </Card>
           </Link>
-          
+
           <Link href="/laptops">
             <Card className="hover:border-primary transition-colors cursor-pointer h-full">
-              <CardContent className="p-6 flex flex-col items-center text-center">
-                <Gamepad2 className="w-8 h-8 text-green-600 mb-3" />
-                <p className="font-medium">Laptop Gaming</p>
+              <CardContent className="p-4 flex flex-col items-center text-center">
+                <Gamepad2 className="w-7 h-7 text-green-600 mb-2" />
+                <p className="font-medium text-sm">Laptop Gaming</p>
               </CardContent>
             </Card>
           </Link>
-          
+
           <Link href="/trip-planner">
             <Card className="hover:border-primary transition-colors cursor-pointer h-full">
-              <CardContent className="p-6 flex flex-col items-center text-center">
-                <Map className="w-8 h-8 text-amber-600 mb-3" />
-                <p className="font-medium">Trip Planner</p>
+              <CardContent className="p-4 flex flex-col items-center text-center">
+                <Map className="w-7 h-7 text-amber-600 mb-2" />
+                <p className="font-medium text-sm">Trip Planner</p>
               </CardContent>
             </Card>
           </Link>
-          
+
           <Link href="/presensi">
             <Card className="hover:border-primary transition-colors cursor-pointer h-full">
-              <CardContent className="p-6 flex flex-col items-center text-center">
-                <Clock className="w-8 h-8 text-purple-600 mb-3" />
-                <p className="font-medium">Presensi</p>
+              <CardContent className="p-4 flex flex-col items-center text-center">
+                <Clock className="w-7 h-7 text-purple-600 mb-2" />
+                <p className="font-medium text-sm">Presensi</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/vps-analysis">
+            <Card className="hover:border-primary transition-colors cursor-pointer h-full">
+              <CardContent className="p-4 flex flex-col items-center text-center">
+                <Server className="w-7 h-7 text-violet-600 mb-2" />
+                <p className="font-medium text-sm">VPS Analysis</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/saas-clone-material">
+            <Card className="hover:border-primary transition-colors cursor-pointer h-full">
+              <CardContent className="p-4 flex flex-col items-center text-center">
+                <BookOpen className="w-7 h-7 text-cyan-600 mb-2" />
+                <p className="font-medium text-sm">Materi SaaS</p>
               </CardContent>
             </Card>
           </Link>
@@ -385,12 +484,13 @@ export default function SuperAppPage() {
                 Service Provider And Management
               </p>
             </div>
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <Link href="/shops" className="hover:text-primary">Service Center</Link>
               <Link href="/laptops" className="hover:text-primary">Laptop Gaming</Link>
               <Link href="/trip-planner" className="hover:text-primary">Trip Planner</Link>
               <Link href="/presensi" className="hover:text-primary">Presensi</Link>
               <Link href="/vps-analysis" className="hover:text-primary">VPS Analysis</Link>
+              <Link href="/saas-clone-material" className="hover:text-primary">Materi SaaS</Link>
             </div>
           </div>
           <p className="text-center text-sm text-muted-foreground mt-8">
