@@ -259,6 +259,12 @@ export default function SaaSCloneMaterialPage() {
                 Halaman Output Code
               </Button>
             </Link>
+            <Link href="/trello-premium-guide">
+              <Button variant="outline" className="border-slate-300/40 bg-transparent text-slate-100 hover:bg-slate-800">
+                <BookOpen className="mr-2 h-4 w-4" />
+                Trello Premium Guide
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

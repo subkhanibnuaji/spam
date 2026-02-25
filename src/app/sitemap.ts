@@ -30,6 +30,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     },
+    {
+      url: "https://spam-seven-iota.vercel.app/saas-clone-material",
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: "https://spam-seven-iota.vercel.app/saas-clone-material/code-output",
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
+      url: "https://spam-seven-iota.vercel.app/trello-premium-guide",
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
     ...shopUrls,
   ];
 }
