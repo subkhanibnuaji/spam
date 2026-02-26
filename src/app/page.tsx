@@ -16,7 +16,8 @@ import {
   Laptop,
   ArrowRight,
   BadgeCheck,
-  BookOpenCheck
+  BookOpenCheck,
+  BookDown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -285,6 +286,44 @@ export default function SuperAppPage() {
               </Link>
             </CardContent>
           </Card>
+
+          {/* Book Downloader Card */}
+          <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50 relative overflow-hidden">
+            <div className="absolute top-0 right-0 bg-emerald-500 text-white text-xs px-2 py-1 rounded-bl-lg">
+              Baru!
+            </div>
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-emerald-200 transition-colors">
+                <BookDown className="w-6 h-6 text-emerald-600" />
+              </div>
+              <CardTitle className="text-xl">Book Downloader</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Panduan lengkap Z-Library & Annas Archive: domain, bypass limit, promo code.
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Domain Aktif</span>
+                  <span className="font-medium">8+ mirror</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Download/Hari</span>
+                  <span className="font-medium text-emerald-600">999 (Premium)</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Update</span>
+                  <span className="font-medium text-emerald-700">Feb 2026</span>
+                </div>
+              </div>
+              <Link href="/book-downloader">
+                <Button className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700">
+                  Buka Panduan
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -437,6 +476,15 @@ export default function SuperAppPage() {
               </CardContent>
             </Card>
           </Link>
+
+          <Link href="/book-downloader">
+            <Card className="hover:border-primary transition-colors cursor-pointer h-full">
+              <CardContent className="p-6 flex flex-col items-center text-center">
+                <BookDown className="w-8 h-8 text-emerald-600 mb-3" />
+                <p className="font-medium">Book Downloader</p>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </section>
 
@@ -459,6 +507,7 @@ export default function SuperAppPage() {
               <Link href="/vps-analysis" className="hover:text-primary">VPS Analysis</Link>
               <Link href="/saas-clone-material" className="hover:text-primary">Materi SaaS</Link>
               <Link href="/trello-premium-guide" className="hover:text-primary">Materi Trello</Link>
+              <Link href="/book-downloader" className="hover:text-primary">Book Downloader</Link>
             </div>
           </div>
           <p className="text-center text-sm text-muted-foreground mt-8">

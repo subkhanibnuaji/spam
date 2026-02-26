@@ -10,7 +10,7 @@ const tabs = [
   { href: "/shops", label: "Shops", icon: Store },
   { href: "/trip-planner", label: "Trip", icon: Map },
   { href: "/presensi", label: "Presensi", icon: ClipboardCheck },
-  { href: "/saas-clone-material", label: "Materi", icon: BookOpen },
+  { href: "/book-downloader", label: "Books", icon: BookOpen },
 ];
 
 export function MobileNav() {
